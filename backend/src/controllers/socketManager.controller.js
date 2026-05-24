@@ -6,19 +6,38 @@ let timeOnline = {};
 
 
 const connectToSocket = (server) => {
-  const io = new Server(server);
+  const io = new Server(server,
+    {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        allowHeaders: ["*"],
+        credentials: true
+      }
+    }
+  );
 
   io.on("connection", (socket) => {
 
+    // User join a Room
     socket.on("join_call", (path) => {
-      if (connections[path] === undefined){
+      if (connections[path] === undefined) {
         connections[path] = [];
       }
-      connection[path].push(socket.id);
+      connections[path].push(socket.id);
       timeOnline[socket.id] = new Date();
 
-      for(let id in connections[path]){
-        io.to(connections[path][id]).emit("user_joined", socket.id);
+      for (let id in connections[path]) {
+        io.to(connections[path][id]).emit("user_joined", socket.id, connections[path]);
+      }
+
+      if (messages[path] !== undefined) {
+        for (let a = 0; a < messages[path].length; a++) {
+          io.to(socket.id).emit("chat_message", messages[path][a]['data'],
+            messages[path][a]['sender'], messages[path][a]['socket-id-sender']
+          );
+
+        }
       }
     })
 
@@ -27,10 +46,60 @@ const connectToSocket = (server) => {
     })
 
     socket.on("chat_message", (message) => {
-      io.emit("chat_message", message);
+      const [matchingRoom, found] = Object.entries(connections)
+        .reduce(([room, isFound], [roomKey, roomValue]) => {
+          if (!isFound && roomValue.includes(socket.id)) {
+            return [roomKey, true];
+          }
+          return [room, isFound]
+        }, ["", false]);
+
+      if (found === true) {
+        if (messages[matchingRoom] === undefined) {
+          messages[matchingRoom] = [];
+        }
+
+        messages[matchingRoom].push({
+          'sender': sender,
+          'data': data,
+          'socket-id-sender': socket.id
+        });
+
+        console.log("message", key, ":", sender, data);
+
+        connections[matchingRoom].forEach((elem) => {
+          io.to(elem).emit("chat_message", message, sender, socket.id);
+        })
+      }
     })
 
     socket.on("disconnect", () => {
+
+      var diffTime = Math.abs(timeOnline[socket.id] - new Date());
+
+      var key
+
+      for (const [k, v] of JSON.parse(JSON.stringify(Object.entries(connections)))) {
+
+        for (let a = 0; a < v.length; a++) {
+          if (v[a] === socket.id) {
+            key = k;
+
+            for (let b = 0; b < connections[key].length; b++) {
+              io.to(connections[key][b]).emit("user_left", socket.id, connections[key]);
+            }
+          }
+
+          var index = connections[key].indexOf(socket.id);
+
+          connections[key].splice(index, 1);
+
+          if (connections[key].length === 0) {
+            delete connections[key];
+          }
+        }
+
+      }
 
     })
 
