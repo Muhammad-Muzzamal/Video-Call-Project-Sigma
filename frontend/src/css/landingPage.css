@@ -1,0 +1,53 @@
+.landingPageContainer{
+    width: 100vw;
+    height: 100vh;
+    background: url("/public/landing_page_background.jpg");
+    background-repeat:no-repeat ;
+    background-size: cover;
+}
+.landingPageContainer nav{
+    display: flex;
+    justify-content: space-between;
+}
+.landingPageContainer .nav-header{
+    color: white;
+    padding-inline: 1.2rem;
+    padding-block: 1.6rem;
+}
+.landingPageContainer .nav-header h2{
+    font-size:1.8rem ;
+    font-weight: 500;
+}
+.landingPageContainer nav .nav-list{
+    color: white;
+    display: flex;
+    gap: 2rem;
+    cursor: pointer;
+}
+.landingMainContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 5rem;
+}
+.landingMainContainer .landing-main-content{
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.landingMainContainer .landing-main-image img{
+    width: 30vw;
+}
+.landingMainContainer .landing-main-content h2 span{
+    color: orangered;
+}
+.landingMainContainer .landing-main-content button{
+    background: orangered;
+    padding: 0.8rem;
+    width: fit-content;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+}

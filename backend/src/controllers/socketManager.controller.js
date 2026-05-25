@@ -24,7 +24,7 @@ const connectToSocket = (server) => {
       if (connections[path] === undefined) {
         connections[path] = [];
       }
-      connections[path].push(socket.id);
+      connections[path].push(socket.id);dxr5de
       timeOnline[socket.id] = new Date();
 
       for (let id in connections[path]) {
