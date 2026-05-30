@@ -1,32 +1,35 @@
 import React from 'react'
-import "../css/landingPage.css"
 
 const LandingPage = () => {
     return (
-        <div className='landingPageContainer'>
-            <nav>
-                <div className='nav-header'><h2>MuzzamalDev video Call</h2></div>
-                <div className='nav-list'>
-                    <p>join as guest</p>
-                    <p>Register</p>
-                    <div role='button'>
-                        <p>Login</p>
-                    </div>
-                </div>
+        /* Added bg-[url('/1.jpg')] bg-cover bg-no-repeat bg-center */
+        <div className="landing-page h-screen bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url('/1.jpg')] bg-cover bg-no-repeat bg-center">
+            <nav className='flex justify-between px-20 py-5'>
+                <div className='text-3xl font-bold text-[#B599EB]'>Apna Video Call</div>
+                <ul className='flex items-center gap-10 text-white'>
+                    <li className='cursor-pointer'>Join as Guest</li>
+                    <li className='cursor-pointer'>Register</li>
+                    <li className='cursor-pointer'>Login</li>
+                </ul>
             </nav>
+            <div className="flex justify-between items-center px-50">
 
-
-            {/* Landing Main Container */}
-            <div className="landingMainContainer">
-                <div className="landing-main-content">
-                    <h2><span>Connect</span> with your LOved Ones</h2>
-                    <p>Cover a distance by MuzzamalDev video call</p>
-                    <button type='button'>Set Started</button>
+                <div className='text-white space-y-4'>
+                    <div className='text-5xl font-bold'>
+                        <span className='text-[#B599EB]'>Connect</span> with your loved Ones
+                    </div>
+                    <div className='text-2xl'>
+                        Cover a distance by Apna Video Call
+                    </div>
+                    <button className='bg-[#B599EB] text-black py-2 px-4 rounded-3xl text-xl'>Get Started</button>
                 </div>
-                <div className="landing-main-image">
-                    <img src="public/landing_page_image.jpg" alt="" />
+
+                {/* image */}
+                <div className='w-[30vw]'>
+                    <img src="/landing_page_image.jpg" alt="" />
                 </div>
             </div>
+
         </div>
     )
 }
