@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const LandingPage = () => {
     return (
@@ -7,9 +8,9 @@ const LandingPage = () => {
             <nav className='flex justify-between px-20 py-5'>
                 <div className='text-3xl font-bold text-[#B599EB]'>Apna Video Call</div>
                 <ul className='flex items-center gap-10 text-white'>
-                    <li className='cursor-pointer'>Join as Guest</li>
-                    <li className='cursor-pointer'>Register</li>
-                    <li className='cursor-pointer'>Login</li>
+                    <li className='cursor-pointer'> <Link to={''}>Join as Guest</Link> </li>
+                    <li className='cursor-pointer'><Link to={'/register'}>Register</Link></li>
+                    <li className='cursor-pointer'><Link to={'/login'}>Login</Link></li>
                 </ul>
             </nav>
             <div className="flex justify-between items-center px-50">
