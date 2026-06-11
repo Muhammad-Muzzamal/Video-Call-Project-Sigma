@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react';
 import api from '../config/api.config.js';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -163,12 +163,12 @@ const LoginPage = () => {
                     {/* Register Link Footer */}
                     <div className="mt-6 text-center text-sm text-gray-400">
                         Don't have an account?{" "}
-                        <a
-                            href="/register"
+                        <Link
+                            to="/register"
                             className="text-purple-400 font-medium hover:text-purple-300 transition-colors ml-1"
                         >
                             Register here
-                        </a>
+                        </Link>
                     </div>
 
                 </div>

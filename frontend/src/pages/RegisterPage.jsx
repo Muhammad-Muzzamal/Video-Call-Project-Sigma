@@ -3,12 +3,13 @@ import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User, UserCheck } from 'lucide-r
 import { useNavigate } from 'react-router-dom'; // 1. useNavigate Import karein
 import api from '../config/api.config.js';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
     const navigate = useNavigate(); // 2. Hook initialize karein
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({ name: "", username: "" ?? "", password: "" });
+    const [formData, setFormData] = useState({ name: "", username: "", password: "" });
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
@@ -170,12 +171,12 @@ const RegisterPage = () => {
                     {/* Back to Login Link Footer */}
                     <div className="mt-6 text-center text-sm text-gray-400">
                         Already have an account?{" "}
-                        <a
-                            href="/login"
+                        <Link
+                            to="/login"
                             className="text-purple-400 font-medium hover:text-purple-300 transition-colors ml-1"
                         >
                             Login here
-                        </a>
+                        </Link>
                     </div>
 
                 </div>
