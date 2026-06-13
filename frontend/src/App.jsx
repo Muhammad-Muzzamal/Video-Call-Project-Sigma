@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import { Toaster } from 'react-hot-toast';
 import VideoMeet from "./pages/VideoMeet";
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 const App = () => {
@@ -41,7 +42,11 @@ const App = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path='/:url' element={<VideoMeet />} />
+          <Route path='/:url' element={
+            <ProtectedRoute>
+              <VideoMeet />
+            </ProtectedRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </>

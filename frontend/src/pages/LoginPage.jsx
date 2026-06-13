@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react';
 import api from '../config/api.config.js';
 import toast from 'react-hot-toast';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
     const navigate = useNavigate()
+    const location = useLocation();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ username: "", password: "" });
     const [loading, setLoading] = useState(false)
@@ -19,14 +20,17 @@ const LoginPage = () => {
             const response = await api.post("/auth/login", formData)
 
             if (response.data?.status_code === 200 || response.status === 200) {
-                const token = response.data?.data?.user?.token;
-                localStorage.setItem("token", token);
+                const token = response.data?.data?.user?.token || response.data?.data?.token || response.data?.token;
+                const user = response.data?.data?.user || response.data?.data || null;
+                if (token) localStorage.setItem("token", token);
+                if (user) localStorage.setItem("user", JSON.stringify(user));
 
-                toast.success("Login Successfully.");
+                toast.success("Login successful.");
 
                 setTimeout(() => {
-                    navigate("/");
-                }, 1000);
+                    const dest = location.state?.from || "/default";
+                    navigate(dest);
+                }, 700);
             } else {
                 toast.error(response.data?.message || "Something went wrong.");
             }
@@ -54,10 +58,10 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#030014] text-gray-200 flex flex-col justify-between relative overflow-hidden font-sans">
+        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between relative overflow-hidden font-sans">
 
             {/* Ambient Deep Purple Glow matching the theme in image_41acda.jpg */}
-            <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[1000px] h-[300px] bg-gradient-to-r from-purple-900/20 via-indigo-900/40 to-purple-950/20 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[900px] h-[240px] bg-gradient-to-r from-purple-200/40 via-purple-100/30 to-purple-200/30 blur-[80px] rounded-full pointer-events-none" />
 
             {/* Header Navigation */}
             <header className="w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center z-10">
@@ -78,14 +82,14 @@ const LoginPage = () => {
 
             {/* Main Login UI */}
             <main className="flex-1 flex items-center justify-center p-6 z-10">
-                <div className="w-full max-w-md bg-white/[0.02] border border-white/[0.05] backdrop-blur-xl rounded-2xl p-8 shadow-2xl shadow-purple-950/20">
+                <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
 
                     {/* Card Title */}
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">
+                        <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-2">
                             Welcome Back
                         </h1>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-600">
                             Log in to your account to continue
                         </p>
                     </div>
@@ -105,7 +109,7 @@ const LoginPage = () => {
                                 <input
                                     type="text"
                                     placeholder="Enter your username"
-                                    className="w-full pl-10 pr-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm"
+                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
                                     required
                                     name='username'
                                     onChange={(e) => {
@@ -133,7 +137,7 @@ const LoginPage = () => {
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    className="w-full pl-10 pr-10 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all text-sm"
+                                    className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
                                     required
                                     name='password'
                                     onChange={(e) => {
@@ -153,7 +157,7 @@ const LoginPage = () => {
                         {/* Submit Action */}
                         <button
                             type="submit"
-                            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium rounded-xl shadow-lg shadow-purple-600/20 active:scale-[0.99] transition-all text-sm flex justify-center items-center"
+                            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-purple-200 to-purple-300 hover:from-purple-100 hover:to-purple-300 text-purple-900 font-medium rounded-xl shadow active:scale-[0.99] transition-all text-sm flex justify-center items-center"
                             disabled={loading}
                         >
                             {loading ? <Loader2 className='animate-spin' /> : <span>Sign In</span>}
@@ -165,7 +169,7 @@ const LoginPage = () => {
                         Don't have an account?{" "}
                         <Link
                             to="/register"
-                            className="text-purple-400 font-medium hover:text-purple-300 transition-colors ml-1"
+                            className="text-purple-600 font-medium hover:text-purple-500 transition-colors ml-1"
                         >
                             Register here
                         </Link>

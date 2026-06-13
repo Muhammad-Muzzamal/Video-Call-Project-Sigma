@@ -19,6 +19,8 @@ const connectToSocket = (server) => {
 
   io.on("connection", (socket) => {
 
+    console.log("SOMETHING CONNECTED");
+
     // User join a Room
     socket.on("join_call", (path) => {
       if (connections[path] === undefined) {
