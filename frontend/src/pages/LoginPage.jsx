@@ -1,186 +1,170 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User, Video } from 'lucide-react';
 import api from '../config/api.config.js';
 import toast from 'react-hot-toast';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
-    const navigate = useNavigate()
-    const location = useLocation();
-    const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({ username: "", password: "" });
-    const [loading, setLoading] = useState(false)
+    const navigate  = useNavigate();
+    const location  = useLocation();
+    const [showPass, setShowPass] = useState(false);
+    const [loading, setLoading]   = useState(false);
+    const [form, setForm]         = useState({ username: '', password: '' });
 
-    // Plug your custom login handler here
-    const handleLoginSubmit = async (e) => {
+    const set = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }));
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true)
-
+        setLoading(true);
         try {
-            const response = await api.post("/auth/login", formData)
-
-            if (response.data?.status_code === 200 || response.status === 200) {
-                const token = response.data?.data?.user?.token || response.data?.data?.token || response.data?.token;
-                const user = response.data?.data?.user || response.data?.data || null;
-                if (token) localStorage.setItem("token", token);
-                if (user) localStorage.setItem("user", JSON.stringify(user));
-
-                toast.success("Login successful.");
-
-                setTimeout(() => {
-                    const dest = location.state?.from || "/default";
-                    navigate(dest);
-                }, 700);
+            const res = await api.post('/auth/login', form);
+            if (res.data?.status_code === 200 || res.status === 200) {
+                const token = res.data?.data?.user?.token || res.data?.data?.token || res.data?.token;
+                const user  = res.data?.data?.user || res.data?.data || null;
+                if (token) localStorage.setItem('token', token);
+                if (user)  localStorage.setItem('user', JSON.stringify(user));
+                toast.success('Welcome back!');
+                setTimeout(() => navigate(location.state?.from || '/'), 600);
             } else {
-                toast.error(response.data?.message || "Something went wrong.");
+                toast.error(res.data?.message || 'Invalid credentials.');
             }
-
-        } catch (error) {
-            // console.log(error.response.status)
-            if (error.response) {
-                if (error.response.status === 404) {
-                    toast.error("User not found.")
-                } else {
-                    toast.error("Internal Server Error")
-                }
+        } catch (err) {
+            if (err.response?.status === 401 || err.response?.status === 404) {
+                toast.error('Invalid username or password.');
+            } else if (err.response) {
+                toast.error('Server error. Please try again.');
             } else {
-                toast.error("Check your Connection")
-
+                toast.error('Network error. Check your connection.');
             }
-
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-
-        setLoading(false)
-
-
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between relative overflow-hidden font-sans">
+        <div className="min-h-screen bg-[#08080f] text-zinc-100 flex flex-col relative overflow-hidden font-sans">
 
-            {/* Ambient Deep Purple Glow matching the theme in image_41acda.jpg */}
-            <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[900px] h-[240px] bg-gradient-to-r from-purple-200/40 via-purple-100/30 to-purple-200/30 blur-[80px] rounded-full pointer-events-none" />
+            {/* Ambient glow */}
+            <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-violet-900/10 blur-[130px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-indigo-900/8 blur-[100px] rounded-full pointer-events-none" />
 
-            {/* Header Navigation */}
-            <header className="w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center z-10">
-                {/* Back Navigator */}
+            {/* Header */}
+            <header className="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
                 <button
-                    onClick={() => window.history.back()}
-                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-purple-400 transition-colors group"
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-sm font-semibold text-zinc-500 hover:text-zinc-100 group transition-colors cursor-pointer"
                 >
-                    <ArrowLeft size={18} className="transform group-hover:-translate-x-1 transition-transform" />
-                    <span>Back to Home</span>
+                    <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+                    Back to Home
                 </button>
 
-                {/* Brand Name */}
-                <div className="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300">
-                    Apna Video Call
+                <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center shadow shadow-violet-600/30">
+                        <Video size={13} className="text-white" />
+                    </div>
+                    <span className="text-sm font-bold text-zinc-300">Apna Video Call</span>
                 </div>
             </header>
 
-            {/* Main Login UI */}
-            <main className="flex-1 flex items-center justify-center p-6 z-10">
-                <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+            {/* Main card */}
+            <main className="relative z-10 flex-1 flex items-center justify-center p-6">
+                <div className="w-full max-w-md">
+                    {/* Card */}
+                    <div className="bg-[#0d0d14] border border-zinc-800 rounded-2xl p-8 shadow-2xl shadow-black/40">
 
-                    {/* Card Title */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-2">
-                            Welcome Back
-                        </h1>
-                        <p className="text-sm text-gray-600">
-                            Log in to your account to continue
-                        </p>
-                    </div>
-
-                    {/* Form */}
-                    <form onSubmit={handleLoginSubmit} className="space-y-5">
-
-                        {/* 1. Username Field */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Username
-                            </label>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500">
-                                    <User size={18} />
-                                </span>
-                                <input
-                                    type="text"
-                                    placeholder="Enter your username"
-                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
-                                    required
-                                    name='username'
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, username: e.target.value }))
-                                    }}
-                                />
+                        {/* Title */}
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-violet-600/10 border border-violet-500/20 mb-4">
+                                <Video size={22} className="text-violet-400" />
                             </div>
+                            <h1 className="text-2xl font-black tracking-tight text-white mb-1.5">Welcome back</h1>
+                            <p className="text-sm text-zinc-600">Sign in to your account to continue</p>
                         </div>
 
-                        {/* 2. Password Field */}
-                        <div className="space-y-1.5">
-                            <div className="flex justify-between items-center">
-                                <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+
+                            {/* Username */}
+                            <div>
+                                <label className="block text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-2">
+                                    Username
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-700 pointer-events-none">
+                                        <User size={15} />
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="Enter your username"
+                                        value={form.username}
+                                        onChange={set('username')}
+                                        className="w-full pl-10 pr-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition text-sm font-medium"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label className="block text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-2">
                                     Password
                                 </label>
-                                {/* TODO */}
-                                {/* <a href="#forgot" className="text-xs text-purple-400 hover:underline">
-                  Forgot?
-                </a> */}
+                                <div className="relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-700 pointer-events-none">
+                                        <Lock size={15} />
+                                    </span>
+                                    <input
+                                        type={showPass ? 'text' : 'password'}
+                                        placeholder="••••••••"
+                                        value={form.password}
+                                        onChange={set('password')}
+                                        className="w-full pl-10 pr-11 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition text-sm font-medium"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPass(!showPass)}
+                                        className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-600 hover:text-zinc-300 transition cursor-pointer"
+                                    >
+                                        {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500">
-                                    <Lock size={18} />
-                                </span>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
-                                    required
-                                    name='password'
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, password: e.target.value }))
-                                    }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-300"
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full mt-2 py-3.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-violet-600/25 active:scale-[0.98] transition-all text-sm flex justify-center items-center gap-2 cursor-pointer"
+                            >
+                                {loading ? <Loader2 className="animate-spin" size={18} /> : 'Sign In →'}
+                            </button>
+                        </form>
+
+                        {/* Divider */}
+                        <div className="my-6 flex items-center gap-3">
+                            <div className="flex-1 h-px bg-zinc-800" />
+                            <span className="text-xs text-zinc-700 font-semibold">OR</span>
+                            <div className="flex-1 h-px bg-zinc-800" />
                         </div>
 
-                        {/* Submit Action */}
-                        <button
-                            type="submit"
-                            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-purple-200 to-purple-300 hover:from-purple-100 hover:to-purple-300 text-purple-900 font-medium rounded-xl shadow active:scale-[0.99] transition-all text-sm flex justify-center items-center"
-                            disabled={loading}
-                        >
-                            {loading ? <Loader2 className='animate-spin' /> : <span>Sign In</span>}
-                        </button>
-                    </form>
-
-                    {/* Register Link Footer */}
-                    <div className="mt-6 text-center text-sm text-gray-400">
-                        Don't have an account?{" "}
-                        <Link
-                            to="/register"
-                            className="text-purple-600 font-medium hover:text-purple-500 transition-colors ml-1"
-                        >
-                            Register here
-                        </Link>
+                        {/* Register link */}
+                        <p className="text-center text-sm text-zinc-600">
+                            Don't have an account?{' '}
+                            <Link
+                                to="/register"
+                                className="text-violet-400 hover:text-violet-300 font-semibold transition-colors"
+                            >
+                                Create one
+                            </Link>
+                        </p>
                     </div>
-
                 </div>
             </main>
 
-            {/* Footer spacer */}
-            <footer className="w-full text-center py-6 text-xs text-gray-600 z-10">
-                &copy; {new Date().getFullYear()} Apna Video Call. All rights reserved.
+            {/* Footer */}
+            <footer className="relative z-10 text-center py-5 text-xs text-zinc-800 border-t border-zinc-900/60">
+                © {new Date().getFullYear()} Apna Video Call
             </footer>
         </div>
     );

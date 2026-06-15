@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -9,8 +9,15 @@ const isAuthenticated = () => {
 
 const ProtectedRoute = ({ children }) => {
     const location = useLocation();
-    if (!isAuthenticated()) {
-        toast.error('Please login to access this page');
+    const authed = isAuthenticated();
+
+    useEffect(() => {
+        if (!authed) {
+            toast.error('Please login to access this page');
+        }
+    }, [authed]);
+
+    if (!authed) {
         return <Navigate to="/login" replace state={{ from: location.pathname }} />;
     }
     return children;

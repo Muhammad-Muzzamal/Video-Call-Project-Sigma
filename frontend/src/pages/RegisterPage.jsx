@@ -1,41 +1,31 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User, UserCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // 1. useNavigate Import karein
+import { ArrowLeft, Eye, EyeOff, Loader2, Lock, User, UserCheck, Video } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../config/api.config.js';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
-    const navigate = useNavigate(); // 2. Hook initialize karein
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({ name: "", username: "", password: "" });
+    const navigate = useNavigate();
+    const [showPass, setShowPass] = useState(false);
+    const [loading, setLoading]   = useState(false);
+    const [form, setForm]         = useState({ name: '', username: '', password: '' });
 
-    const handleRegisterSubmit = async (e) => {
+    const set = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }));
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-
         try {
-            const response = await api.post("/auth/register", formData);
-            console.log("Registration Success:", response);
-
-            // Success alert message
-            toast.success("Account created successfully!");
-
-            // 3. 1.5 seconds delay ke baad /login par redirect karein taakay user toast dekh sakay
-            setTimeout(() => {
-                navigate("/login");
-            }, 1500);
-
-        } catch (error) {
-            if (error.response) {
-                if (error.response.status === 409 || error.response.status === 400) {
-                    toast.error(error.response.data?.message || "Username is already taken.");
-                } else {
-                    toast.error(error.response.data?.message || "Internal Server Error.");
-                }
+            await api.post('/auth/register', form);
+            toast.success('Account created! Redirecting to login...');
+            setTimeout(() => navigate('/login'), 1200);
+        } catch (err) {
+            if (err.response?.status === 409 || err.response?.status === 400) {
+                toast.error(err.response.data?.message || 'Username already taken.');
+            } else if (err.response) {
+                toast.error(err.response.data?.message || 'Server error. Try again.');
             } else {
-                toast.error("Check your Connection");
+                toast.error('Network error. Check your connection.');
             }
         } finally {
             setLoading(false);
@@ -43,148 +33,148 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col justify-between relative overflow-hidden font-sans">
+        <div className="min-h-screen bg-[#08080f] text-zinc-100 flex flex-col relative overflow-hidden font-sans">
 
-            {/* Subtle purple glow */}
-            <div className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[900px] h-[240px] bg-gradient-to-r from-purple-200/40 via-purple-100/30 to-purple-200/30 blur-[80px] rounded-full pointer-events-none" />
+            {/* Ambient glow */}
+            <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-violet-900/10 blur-[130px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-900/8 blur-[100px] rounded-full pointer-events-none" />
 
-            {/* Header Navigation */}
-            <header className="w-full max-w-7xl mx-auto px-6 py-6 flex justify-between items-center z-10">
-                {/* Back Navigator */}
+            {/* Header */}
+            <header className="relative z-10 w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
                 <button
-                    onClick={() => window.history.back()}
-                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-purple-400 transition-colors group"
+                    onClick={() => navigate('/')}
+                    className="flex items-center gap-2 text-sm font-semibold text-zinc-500 hover:text-zinc-100 group transition-colors cursor-pointer"
                 >
-                    <ArrowLeft size={18} className="transform group-hover:-translate-x-1 transition-transform" />
-                    <span>Back to Home</span>
+                    <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
+                    Back to Home
                 </button>
 
-                {/* Brand Name */}
-                <div className="text-xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300">
-                    Apna Video Call
+                <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center shadow shadow-violet-600/30">
+                        <Video size={13} className="text-white" />
+                    </div>
+                    <span className="text-sm font-bold text-zinc-300">Apna Video Call</span>
                 </div>
             </header>
 
-            {/* Main Register UI Card */}
-            <main className="flex-1 flex items-center justify-center p-6 z-10">
-                <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+            {/* Main */}
+            <main className="relative z-10 flex-1 flex items-center justify-center p-6">
+                <div className="w-full max-w-md">
+                    <div className="bg-[#0d0d14] border border-zinc-800 rounded-2xl p-8 shadow-2xl shadow-black/40">
 
-                    {/* Card Title */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-semibold tracking-tight text-gray-900 mb-2">
-                            Create Account
-                        </h1>
-                        <p className="text-sm text-gray-600">
-                            Join us and enjoy seamless high-quality video calls
+                        {/* Title */}
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-violet-600/10 border border-violet-500/20 mb-4">
+                                <UserCheck size={22} className="text-violet-400" />
+                            </div>
+                            <h1 className="text-2xl font-black tracking-tight text-white mb-1.5">Create account</h1>
+                            <p className="text-sm text-zinc-600">Join and start hosting video meetings</p>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-4">
+
+                            {/* Full Name */}
+                            <div>
+                                <label className="block text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-2">
+                                    Full Name
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-700 pointer-events-none">
+                                        <UserCheck size={15} />
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="Your full name"
+                                        value={form.name}
+                                        onChange={set('name')}
+                                        className="w-full pl-10 pr-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition text-sm font-medium"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Username */}
+                            <div>
+                                <label className="block text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-2">
+                                    Username
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-700 pointer-events-none">
+                                        <User size={15} />
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="Choose a unique username"
+                                        value={form.username}
+                                        onChange={set('username')}
+                                        className="w-full pl-10 pr-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition text-sm font-medium"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label className="block text-[11px] font-semibold text-zinc-600 uppercase tracking-widest mb-2">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-zinc-700 pointer-events-none">
+                                        <Lock size={15} />
+                                    </span>
+                                    <input
+                                        type={showPass ? 'text' : 'password'}
+                                        placeholder="Create a strong password"
+                                        value={form.password}
+                                        onChange={set('password')}
+                                        className="w-full pl-10 pr-11 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-200 placeholder-zinc-700 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 transition text-sm font-medium"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPass(!showPass)}
+                                        className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-600 hover:text-zinc-300 transition cursor-pointer"
+                                    >
+                                        {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Submit */}
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full mt-2 py-3.5 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl shadow-lg shadow-violet-600/25 active:scale-[0.98] transition-all text-sm flex justify-center items-center gap-2 cursor-pointer"
+                            >
+                                {loading ? <Loader2 className="animate-spin" size={18} /> : 'Create Account →'}
+                            </button>
+                        </form>
+
+                        {/* Divider */}
+                        <div className="my-6 flex items-center gap-3">
+                            <div className="flex-1 h-px bg-zinc-800" />
+                            <span className="text-xs text-zinc-700 font-semibold">OR</span>
+                            <div className="flex-1 h-px bg-zinc-800" />
+                        </div>
+
+                        {/* Login link */}
+                        <p className="text-center text-sm text-zinc-600">
+                            Already have an account?{' '}
+                            <Link
+                                to="/login"
+                                className="text-violet-400 hover:text-violet-300 font-semibold transition-colors"
+                            >
+                                Sign in
+                            </Link>
                         </p>
                     </div>
-
-                    {/* Form */}
-                    <form onSubmit={handleRegisterSubmit} className="space-y-5">
-
-                        {/* 1. Name Field */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Full Name
-                            </label>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500">
-                                    <UserCheck size={18} />
-                                </span>
-                                <input
-                                    type="text"
-                                    placeholder="Enter your full name"
-                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
-                                    required
-                                    name='name'
-                                    value={formData.name}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, name: e.target.value }))
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* 2. Username Field */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Username
-                            </label>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500">
-                                    <User size={18} />
-                                </span>
-                                <input
-                                    type="text"
-                                    placeholder="Choose a username"
-                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
-                                    required
-                                    name='username'
-                                    value={formData.username}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, username: e.target.value }))
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* 3. Password Field */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                Password
-                            </label>
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500">
-                                    <Lock size={18} />
-                                </span>
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="••••••••"
-                                    className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-300 focus:ring-1 focus:ring-purple-200 transition-all text-sm"
-                                    required
-                                    name='password'
-                                    value={formData.password}
-                                    onChange={(e) => {
-                                        setFormData((prev) => ({ ...prev, password: e.target.value }))
-                                    }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-300"
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Submit Action */}
-                        <button
-                            type="submit"
-                            className="w-full mt-2 py-3 px-4 bg-gradient-to-r from-purple-200 to-purple-300 hover:from-purple-100 hover:to-purple-300 text-purple-900 font-medium rounded-xl shadow disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex justify-center items-center gap-2"
-                            disabled={loading}
-                        >
-                            {loading ? <Loader2 className='animate-spin' size={18} /> : <span>Sign Up</span>}
-                        </button>
-                    </form>
-
-                    {/* Back to Login Link Footer */}
-                    <div className="mt-6 text-center text-sm text-gray-400">
-                        Already have an account?{" "}
-                        <Link
-                            to="/login"
-                            className="text-purple-600 font-medium hover:text-purple-500 transition-colors ml-1"
-                        >
-                            Login here
-                        </Link>
-                    </div>
-
                 </div>
             </main>
 
-            {/* Footer spacer */}
-            <footer className="w-full text-center py-6 text-xs text-gray-600 z-10">
-                &copy; {new Date().getFullYear()} Apna Video Call. All rights reserved.
+            {/* Footer */}
+            <footer className="relative z-10 text-center py-5 text-xs text-zinc-800 border-t border-zinc-900/60">
+                © {new Date().getFullYear()} Apna Video Call
             </footer>
         </div>
     );

@@ -14,26 +14,25 @@ const App = () => {
         position="top-center"
         reverseOrder={false}
         gutter={8}
-        containerClassName=""
-        containerStyle={{}}
-        toasterId="default"
         toastOptions={{
-          // Define default options
-          className: '',
-          duration: 5000,
-          removeDelay: 1000,
+          duration: 3500,
+          removeDelay: 800,
           style: {
-            background: '#363636',
-            color: '#fff',
+            background: '#111118',
+            color: '#e4e4e7',
+            border: '1px solid #27272a',
+            borderRadius: '12px',
+            fontSize: '13px',
+            fontWeight: '500',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
           },
-
-          // Default options for specific types
           success: {
             duration: 3000,
-            iconTheme: {
-              primary: 'green',
-              secondary: 'black',
-            },
+            iconTheme: { primary: '#7c3aed', secondary: '#fff' },
+          },
+          error: {
+            duration: 4000,
+            iconTheme: { primary: '#ef4444', secondary: '#fff' },
           },
         }}
       />
